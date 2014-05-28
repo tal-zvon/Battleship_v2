@@ -31,18 +31,19 @@ def draw_grid(num_of_grids, grid_size):
 
     #Draw grid labels
     if num_of_grids == 1:
-        #Note: It works below because the sie of half the word 'Player'
-        #is 3 characters - exactly the same as the 3 character left border
-        #which cancel each other out
+        #Note: The following line properly centers the grid title ("Player")
+        #because the size of half the word "Player" is 3 characters - exactly
+        #the same as the 3 character left border, which cancel each other out
         print ' ' * grid_size + "Player"
         print
 
         #The order of magnitude of the last number in the grid
         #Ex. '1' for 0-9, '2' for 10 - 99, etc.
+        #Used to calculate how many vertical lines the numbers will take to print
         grid_order_of_magnitude = len(str(grid_size))
 
         #10 is a special case. If our grid is grid_size = 10, let it
-        #hang off the side instead of printing 2 rows for every number
+        #hang off the side instead of printing 2 rows of numbers
         if grid_size == 10:
             grid_order_of_magnitude = 1
 
@@ -61,6 +62,8 @@ def draw_grid(num_of_grids, grid_size):
         for i in range(0, grid_order_of_magnitude):
             print ' ' * 2,
             for i2 in range(0, grid_size):
+                #If grid_size is 10, don't worry about the order of
+                #magnitude - just print one row
                 if grid_size == 10:
                     print number_list[i2],
                 else:
