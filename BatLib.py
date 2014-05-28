@@ -46,7 +46,7 @@ def draw_grid(num_of_grids, grid_size):
         #Draw one graph
         for y in range(0, grid_size):
             #Print y axis
-            print 'A|',
+            print '%s|' % chr(ord('a') + y).upper(),
             #Draw graph row
             for x in range(0, grid_size):
                 print 'O',
