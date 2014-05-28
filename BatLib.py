@@ -31,7 +31,10 @@ def draw_grid(num_of_grids, grid_size):
 
     #Draw graph labels
     if num_of_grids == 1:
-        print ' ' * 10 + "Player"
+        #Note: It works below because the sie of half the word 'Player'
+        #is 3 characters - exactly the same as the 3 character left border
+        #which cancel each other out
+        print ' ' * grid_size + "Player"
         print
 
         #Draw top labels on graph
