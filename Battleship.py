@@ -13,7 +13,7 @@ Computer_Ships = {'Aircraft Carrier': 1, 'Battleship': 1, 'Cruiser': 1, 'Destroy
 signal.signal(signal.SIGINT, signal_handler)
 
 #Display grid
-#print draw_grid(1, grid_size)
+print draw_grid(2, grid_size)
 
 while True:
     print_ships(Player_Ships)

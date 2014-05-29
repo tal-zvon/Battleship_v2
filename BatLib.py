@@ -15,6 +15,36 @@ class Coordinate(object):
         self.fired_here = fired_here
 
 
+def offset_grids(str1, str2, offset):
+    rtn_val = ''
+    #For every line we need to print
+    for i in range(0, len(str1.split('\n')) + abs(offset)):
+        if offset < 0:
+            #Move second graph down
+            if i < abs(offset):
+                rtn_val += str1.split('\n')[i] + '\n'
+            elif abs(offset) <= i < len(str1.split('\n')):
+                rtn_val += str1.split('\n')[i] + str2.split('\n')[i - abs(offset)] + '\n'
+            else:
+                rtn_val += ' ' * len(str1.split('\n')[3]) + str2.split('\n')[i - abs(offset)] + '\n'
+        #Move second graph up
+        elif offset > 0:
+            pass
+        #Keep graphs on same line
+        elif offset == 0:
+            for LINE in range(0, len(str1.split('\n'))):
+                #On the third line, if grid_size == 10, the alignment will be off
+                #because 10 is the only time there will be an extra character on the
+                #line, which breaks the alignment of the right grid. Here, we fix that:
+                if LINE == 2:
+                    if len(str1.split('\n')[3]) == 10:
+                        rtn_val += str1.split('\n')[LINE] + ' ' * 19 + second_grid.split('\n')[LINE] + '\n'
+                        #Skip to next iteration so the line isn't printed again
+                        continue
+
+                rtn_val += str1.split('\n')[LINE] + ' ' * 20 + second_grid.split('\n')[LINE] + '\n'
+    return rtn_val
+
 def draw_grid(num_of_grids, grid_size, grid_title='Player'):
     """
     Draw either one or two grids on the screen
@@ -89,7 +119,8 @@ def draw_grid(num_of_grids, grid_size, grid_title='Player'):
             #Draw grid row
             for x in range(0, grid_size):
                 grid += 'O '
-            grid += '\n'
+            if y != grid_size - 1:
+                grid += '\n'
 
         return grid
 
@@ -101,6 +132,10 @@ def draw_grid(num_of_grids, grid_size, grid_title='Player'):
         second_grid = draw_grid(1, grid_size, "Computer")
         combined_grids = ''
 
+        #combined_grids = offset_grids(first_grid, second_grid, -1 * (len(first_grid.split('\n')) - 4))
+        combined_grids = offset_grids(first_grid, second_grid, 0)
+
+        '''
         #Run line by line through the output of first_grid and second_grid,
         #combining the two
         for LINE in range(0, len(first_grid.split('\n'))):
@@ -114,6 +149,7 @@ def draw_grid(num_of_grids, grid_size, grid_title='Player'):
                     continue
 
             combined_grids += first_grid.split('\n')[LINE] + ' ' * 20 + second_grid.split('\n')[LINE] + '\n'
+        '''
 
         return combined_grids
 
