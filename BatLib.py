@@ -116,3 +116,21 @@ def draw_grid(num_of_grids, grid_size, grid_title='Player'):
             combined_grids += first_grid.split('\n')[LINE] + ' ' * 20 + second_grid.split('\n')[LINE] + '\n'
 
         return combined_grids
+
+def signal_handler(signal, frame):
+    """
+    Handles Ctrl+C
+    """
+    print "\n"
+    print "You sank my battleship!"
+    exit(0)
+
+def print_ships():
+    print "These are your ships:\n"
+    print '  ID  |  #  |         Ship         |   Size'
+    print '-' * 46
+    print '   1  | %dx  |   Aircraft Carrier   |    5    ' % 1
+    print '   2  | %dx  |   Battleship         |    4    ' % 1
+    print '   3  | %dx  |   Cruiser            |    3    ' % 1
+    print '   4  | %dx  |   Destroyer          |    2    ' % 2
+    print '   5  | %dx  |   Submarine          |    1    ' % 2
