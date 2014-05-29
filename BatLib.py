@@ -117,6 +117,8 @@ def draw_grid(num_of_grids, grid_size, grid_title='Player'):
 
         return combined_grids
 
+
+# noinspection PyUnusedLocal,PyUnusedLocal
 def signal_handler(signal, frame):
     """
     Handles Ctrl+C
@@ -125,12 +127,13 @@ def signal_handler(signal, frame):
     print "You sank my battleship!"
     exit(0)
 
-def print_ships():
+
+def print_ships(ships_remaining):
     print "These are your ships:\n"
     print '  ID  |  #  |         Ship         |   Size'
     print '-' * 46
-    print '   1  | %dx  |   Aircraft Carrier   |    5    ' % 1
-    print '   2  | %dx  |   Battleship         |    4    ' % 1
-    print '   3  | %dx  |   Cruiser            |    3    ' % 1
-    print '   4  | %dx  |   Destroyer          |    2    ' % 2
-    print '   5  | %dx  |   Submarine          |    1    ' % 2
+    print '   1  | %dx  |   Aircraft Carrier   |    5    ' % ships_remaining['Aircraft Carrier']
+    print '   2  | %dx  |   Battleship         |    4    ' % ships_remaining['Battleship']
+    print '   3  | %dx  |   Cruiser            |    3    ' % ships_remaining['Cruiser']
+    print '   4  | %dx  |   Destroyer          |    2    ' % ships_remaining['Destroyer']
+    print '   5  | %dx  |   Submarine          |    1    ' % ships_remaining['Submarine']
