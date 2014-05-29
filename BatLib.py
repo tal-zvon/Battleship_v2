@@ -15,12 +15,14 @@ class Coordinate(object):
         self.fired_here = fired_here
 
 
-def draw_grid(num_of_grids, grid_size):
+def draw_grid(num_of_grids, grid_size, grid_title='Player'):
     """
     Draw either one or two grids on the screen
 
-    :param int grid_size: The size of the grid square
     :param int num_of_grids: Number of grids to draw. Can only be 1 or 2
+    :param int grid_size: The size of the grid square
+    :param str grid_title: The title to write above the grid. The default is None, so the argument
+        can be omitted
     :rtype : string
     """
 
@@ -35,11 +37,9 @@ def draw_grid(num_of_grids, grid_size):
 
     #Draw grid labels
     if num_of_grids == 1:
-        #Note: The following line properly centers the grid title ("Player")
-        #because the size of half the word "Player" is 3 characters - exactly
-        #the same as the 3 character left border, which cancel each other out
-        #Note: The spaces at the end are necessary for dual graph alignment
-        grid += ' ' * grid_size + "Player" + ' ' * grid_size
+        #Aligns the title to the middle of the grid
+        grid += (' ' * 4 + ' ' * (grid_size - (len(grid_title) / 2)) + grid_title + ' ' * (grid_size -
+                                                                                           (len(grid_title) / 2)))
         grid += '\n\n'
 
         #The order of magnitude of the last number in the grid
@@ -97,10 +97,12 @@ def draw_grid(num_of_grids, grid_size):
         #print ' ' * 10 + "Player" + ' ' * 10 + "Computer"
 
         #Draw two grids
-        first_grid = draw_grid(1, grid_size)
-        second_grid = draw_grid(1, grid_size)
+        first_grid = draw_grid(1, grid_size, "Player")
+        second_grid = draw_grid(1, grid_size, "Computer")
         combined_grids = ''
 
+        #Run line by line through the output of first_grid and second_grid,
+        #combining the two
         for LINE in range(0, len(first_grid.split('\n'))):
             #On the third line, if grid_size == 10, the alignment will be off
             #because 10 is the only time there will be an extra character on the
