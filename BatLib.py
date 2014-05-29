@@ -21,8 +21,12 @@ def draw_grid(num_of_grids, grid_size):
 
     :param int grid_size: The size of the grid square
     :param int num_of_grids: Number of grids to draw. Can only be 1 or 2
-    :rtype : None
+    :rtype : string
     """
+
+    #The variable we'll be returning -
+    #the actual grid we drew
+    grid = ''
 
     #We can only draw one or two grids
     if num_of_grids < 1 or num_of_grids > 2:
@@ -34,8 +38,9 @@ def draw_grid(num_of_grids, grid_size):
         #Note: The following line properly centers the grid title ("Player")
         #because the size of half the word "Player" is 3 characters - exactly
         #the same as the 3 character left border, which cancel each other out
-        print ' ' * grid_size + "Player"
-        print
+        #Note: The spaces at the end are necessary for dual graph alignment
+        grid += ' ' * grid_size + "Player" + ' ' * grid_size
+        grid += '\n\n'
 
         #The order of magnitude of the last number in the grid
         #Ex. '1' for 0-9, '2' for 10 - 99, etc.
@@ -60,29 +65,40 @@ def draw_grid(num_of_grids, grid_size):
         #For each order of magnitude, print a new vertical line
         #This just prints numbers up and down instead of sideways
         for i in range(0, grid_order_of_magnitude):
-            print ' ' * 2,
+            grid += ' ' * 4
             for i2 in range(0, grid_size):
                 #If grid_size is 10, don't worry about the order of
                 #magnitude - just print one row
                 if grid_size == 10:
-                    print number_list[i2],
+                    grid += number_list[i2] + ' '
                 else:
-                    print number_list[i2][i],
-            print
+                    grid += number_list[i2][i] + ' '
+            grid += '\n'
 
         #Draw row of underscores
-        print ' ' * 3 + '-' * ((grid_size * 2) - 1)
+        grid += ' ' * 4 + '-' * ((grid_size * 2) - 1)
+        grid += '\n'
 
         #Draw one grid
         for y in range(0, grid_size):
             #Print y axis
-            print '%s|' % chr(ord('a') + y).upper(),
+            grid += '%s |' % chr(ord('a') + y).upper() + ' '
             #Draw grid row
             for x in range(0, grid_size):
-                print 'O',
-            print
+                grid += 'O '
+            grid += '\n'
+
+        return grid
 
     elif num_of_grids == 2:
-        print ' ' * 10 + "Player" + ' ' * 10 + "Computer"
+        #print ' ' * 10 + "Player" + ' ' * 10 + "Computer"
 
         #Draw two grids
+        first_grid = draw_grid(1, grid_size)
+        second_grid = draw_grid(1, grid_size)
+        combined_grids = ''
+
+        for LINE in range(0, grid_size):
+            combined_grids += first_grid.split('\n')[LINE] + ' ' * 20 + second_grid.split('\n')[LINE] + '\n'
+
+        return combined_grids
