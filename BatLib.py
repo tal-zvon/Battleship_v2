@@ -76,7 +76,10 @@ def draw_grid(num_of_grids, grid_size):
             grid += '\n'
 
         #Draw row of underscores
-        grid += ' ' * 4 + '-' * ((grid_size * 2) - 1)
+        if grid_size != 10:
+            grid += ' ' * 4 + '-' * ((grid_size * 2) - 1) + ' '
+        else:
+            grid += ' ' * 4 + '-' * (grid_size * 2)
         grid += '\n'
 
         #Draw one grid
@@ -98,7 +101,16 @@ def draw_grid(num_of_grids, grid_size):
         second_grid = draw_grid(1, grid_size)
         combined_grids = ''
 
-        for LINE in range(0, grid_size):
+        for LINE in range(0, len(first_grid.split('\n'))):
+            #On the third line, if grid_size == 10, the alignment will be off
+            #because 10 is the only time there will be an extra character on the
+            #line, which breaks the alignment of the right grid. Here, we fix that:
+            if LINE == 2:
+                if grid_size == 10:
+                    combined_grids += first_grid.split('\n')[LINE] + ' ' * 19 + second_grid.split('\n')[LINE] + '\n'
+                    #Skip to next iteration so the line isn't printed again
+                    continue
+
             combined_grids += first_grid.split('\n')[LINE] + ' ' * 20 + second_grid.split('\n')[LINE] + '\n'
 
         return combined_grids
