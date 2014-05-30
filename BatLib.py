@@ -15,35 +15,71 @@ class Coordinate(object):
         self.fired_here = fired_here
 
 
-def offset_grids(str1, str2, offset):
+def offset_grids(str1, str2, offset, spacing):
+    """
+    Offsets 2 grids
+    Ex1 - negative offset with some spacing:
+
+        ***
+        ***  ***
+             ***
+
+    Ex2 - positive offset with 0 spacing:
+
+           ***
+        ******
+        ***
+
+    :param str str1: The first grid
+    :param str str2: The second grid
+    :param int offset: The amount and direction the grids should be moved. Can be a positive or negative int.
+    :param int spacing: The amount of space between the grids
+    :rtype : str
+    """
+
+    #The variable that will store the combined
+    #grids
     rtn_val = ''
-    #For every line we need to print
+
+    #Figure out the longest line in str1
+    longest_line = 0
+    for i in range(0, len(str1.split('\n'))):
+        if len(str1.split('\n')[i]) > longest_line:
+            longest_line = len(str1.split('\n')[i])
+
+    #Loop for every line we need to print
     for i in range(0, len(str1.split('\n')) + abs(offset)):
+        #If the offset is negative, move second grid down
         if offset < 0:
-            #Move second graph down
-            if i < abs(offset):
+            #The following "if" statement check if we should only print a line from grid 1, only print a line from
+            #grid 2, or both. It figures out which line should be printed for each grid (based on the offset), makes
+            #sure lines are properly aligned with spaces, and that blank lines are done right
+            if i < abs(offset) and i < len(str1.split('\n')):
                 rtn_val += str1.split('\n')[i] + '\n'
             elif abs(offset) <= i < len(str1.split('\n')):
-                rtn_val += str1.split('\n')[i] + str2.split('\n')[i - abs(offset)] + '\n'
+                rtn_val += str1.split('\n')[i] + ' ' * spacing + str2.split('\n')[i - abs(offset)] + '\n'
+            elif abs(offset) <= i < abs(offset) + len(str2.split('\n')):
+                rtn_val += ' ' * longest_line + ' ' * spacing + str2.split('\n')[i - abs(offset)] + '\n'
             else:
-                rtn_val += ' ' * len(str1.split('\n')[3]) + str2.split('\n')[i - abs(offset)] + '\n'
-        #Move second graph up
+                rtn_val += '\n'
+        #If the offset is positive, move second grid up
         elif offset > 0:
-            pass
-        #Keep graphs on same line
+            #The following "if" statement check if we should only print a line from grid 1, only print a line from
+            #grid 2, or both. It figures out which line should be printed for each grid (based on the offset), makes
+            #sure lines are properly aligned with spaces, and that blank lines are done right
+            if i < offset and i < len(str2.split('\n')):
+                rtn_val += ' ' * longest_line + ' ' * spacing + str2.split('\n')[i] + '\n'
+            elif offset <= i < len(str2.split('\n')):
+                rtn_val += str1.split('\n')[i - offset] + ' ' * spacing + str2.split('\n')[i] + '\n'
+            elif len(str2.split('\n')) <= i >= offset:
+                rtn_val += str1.split('\n')[i - offset] + '\n'
+            else:
+                rtn_val += '\n'
+        #If the offset is 0, keep grids on same line
         elif offset == 0:
-            for LINE in range(0, len(str1.split('\n'))):
-                #On the third line, if grid_size == 10, the alignment will be off
-                #because 10 is the only time there will be an extra character on the
-                #line, which breaks the alignment of the right grid. Here, we fix that:
-                if LINE == 2:
-                    if len(str1.split('\n')[3]) == 10:
-                        rtn_val += str1.split('\n')[LINE] + ' ' * 19 + second_grid.split('\n')[LINE] + '\n'
-                        #Skip to next iteration so the line isn't printed again
-                        continue
-
-                rtn_val += str1.split('\n')[LINE] + ' ' * 20 + second_grid.split('\n')[LINE] + '\n'
+            rtn_val += str1.split('\n')[i] + ' ' * spacing + str2.split('\n')[i] + '\n'
     return rtn_val
+
 
 def draw_grid(num_of_grids, grid_size, grid_title='Player'):
     """
@@ -70,7 +106,10 @@ def draw_grid(num_of_grids, grid_size, grid_title='Player'):
         #Aligns the title to the middle of the grid
         grid += (' ' * 4 + ' ' * (grid_size - (len(grid_title) / 2)) + grid_title + ' ' * (grid_size -
                                                                                            (len(grid_title) / 2)))
-        grid += '\n\n'
+        #On the empty line between the grid title and the
+        #y axis, put spaces to keep proper alignment for an
+        #offset second grid
+        grid += '\n' + ' ' * (grid_size * 2 + 4) + '\n'
 
         #The order of magnitude of the last number in the grid
         #Ex. '1' for 0-9, '2' for 10 - 99, etc.
@@ -100,7 +139,11 @@ def draw_grid(num_of_grids, grid_size, grid_title='Player'):
                 #If grid_size is 10, don't worry about the order of
                 #magnitude - just print one row
                 if grid_size == 10:
-                    grid += number_list[i2] + ' '
+                    grid += number_list[i2]
+                    #Don't add a space after number 10
+                    #to keep proper alignment
+                    if i2 != 9:
+                        grid += ' '
                 else:
                     grid += number_list[i2][i] + ' '
             grid += '\n'
@@ -119,37 +162,18 @@ def draw_grid(num_of_grids, grid_size, grid_title='Player'):
             #Draw grid row
             for x in range(0, grid_size):
                 grid += 'O '
+            #Don't print the final newline
             if y != grid_size - 1:
                 grid += '\n'
 
         return grid
 
     elif num_of_grids == 2:
-        #print ' ' * 10 + "Player" + ' ' * 10 + "Computer"
-
         #Draw two grids
         first_grid = draw_grid(1, grid_size, "Player")
         second_grid = draw_grid(1, grid_size, "Computer")
-        combined_grids = ''
 
-        #combined_grids = offset_grids(first_grid, second_grid, -1 * (len(first_grid.split('\n')) - 4))
-        combined_grids = offset_grids(first_grid, second_grid, 0)
-
-        '''
-        #Run line by line through the output of first_grid and second_grid,
-        #combining the two
-        for LINE in range(0, len(first_grid.split('\n'))):
-            #On the third line, if grid_size == 10, the alignment will be off
-            #because 10 is the only time there will be an extra character on the
-            #line, which breaks the alignment of the right grid. Here, we fix that:
-            if LINE == 2:
-                if grid_size == 10:
-                    combined_grids += first_grid.split('\n')[LINE] + ' ' * 19 + second_grid.split('\n')[LINE] + '\n'
-                    #Skip to next iteration so the line isn't printed again
-                    continue
-
-            combined_grids += first_grid.split('\n')[LINE] + ' ' * 20 + second_grid.split('\n')[LINE] + '\n'
-        '''
+        combined_grids = offset_grids(first_grid, second_grid, -1 * (len(first_grid.split('\n')) - 2), 0)
 
         return combined_grids
 
@@ -165,6 +189,11 @@ def signal_handler(signal, frame):
 
 
 def print_ships(ships_remaining):
+    """
+    Prints the table of remaining ships
+
+    :param dict ships_remaining: A dictionary of the ships remaining
+    """
     print "These are your ships:\n"
     print '  ID  |  #  |         Ship         |   Size'
     print '-' * 46
