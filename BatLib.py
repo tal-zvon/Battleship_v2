@@ -81,7 +81,7 @@ def offset_grids(str1, str2, offset, spacing):
     return rtn_val
 
 
-def draw_grid(num_of_grids, grid_size, grid_title='Player'):
+def draw_grid(num_of_grids, grid_size, grid_title='Player', draw_rem_ships_table=True):
     """
     Draw either one or two grids on the screen
 
@@ -89,6 +89,7 @@ def draw_grid(num_of_grids, grid_size, grid_title='Player'):
     :param int grid_size: The size of the grid square
     :param str grid_title: The title to write above the grid. The default is None, so the argument
         can be omitted
+    :param bool draw_rem_ships_table: True if you want the remaining ships table drawn. False if you don't.
     :rtype : string
     """
 
@@ -169,13 +170,41 @@ def draw_grid(num_of_grids, grid_size, grid_title='Player'):
         return grid
 
     elif num_of_grids == 2:
-        #Draw two grids
+        #Create 2 grids
         first_grid = draw_grid(1, grid_size, "Player")
         second_grid = draw_grid(1, grid_size, "Computer")
 
+        #Combine the grids
         combined_grids = offset_grids(first_grid, second_grid, -1 * (len(first_grid.split('\n')) - 2), 0)
 
-        return combined_grids
+        #If this function was called with draw_rem_ships_table set to True, draw the remaining ships table
+        if draw_rem_ships_table:
+            #Declare 2 lists of remaining ships
+            Player_Ships = {'Aircraft Carrier': 1, 'Battleship': 1, 'Cruiser': 1, 'Destroyer': 2, 'Submarine': 2}
+            Computer_Ships = {'Aircraft Carrier': 1, 'Battleship': 1, 'Cruiser': 1, 'Destroyer': 2, 'Submarine': 2}
+
+            rem_player_ships = print_ships(Player_Ships)
+            rem_computer_ships = print_ships(Computer_Ships)
+
+            combined_grids_with_rem_ships_table = ''
+
+            #Start position
+            if grid_size <= 10:
+                start_pos = 2
+            elif 10 < grid_size < 15:
+                start_pos = 3
+            else:
+                start_pos = ((grid_size + 4) / 2) - (len(rem_player_ships.split('\n')) / 2)
+
+            for LINE in range(0, len(combined_grids.split('\n'))):
+                if start_pos <= LINE < start_pos + len(rem_player_ships.split('\n')):
+                    combined_grids_with_rem_ships_table += combined_grids.split('\n')[LINE] + ' ' * 5 + rem_player_ships.split('\n')[LINE - start_pos] + '\n'
+                else:
+                    combined_grids_with_rem_ships_table += combined_grids.split('\n')[LINE] + '\n'
+
+            return combined_grids_with_rem_ships_table
+        else:
+            return combined_grids
 
 
 # noinspection PyUnusedLocal,PyUnusedLocal
@@ -193,12 +222,18 @@ def print_ships(ships_remaining):
     Prints the table of remaining ships
 
     :param dict ships_remaining: A dictionary of the ships remaining
+    :rtype : string
     """
-    print "These are your ships:\n"
-    print '  ID  |  #  |         Ship         |   Size'
-    print '-' * 46
-    print '   1  | %dx  |   Aircraft Carrier   |    5    ' % ships_remaining['Aircraft Carrier']
-    print '   2  | %dx  |   Battleship         |    4    ' % ships_remaining['Battleship']
-    print '   3  | %dx  |   Cruiser            |    3    ' % ships_remaining['Cruiser']
-    print '   4  | %dx  |   Destroyer          |    2    ' % ships_remaining['Destroyer']
-    print '   5  | %dx  |   Submarine          |    1    ' % ships_remaining['Submarine']
+
+    #Return value - the
+    rtn = ''
+    #rtn += "These are your ships:\n\n"
+    rtn += '  ID  |  #  |         Ship         |   Size' + '\n'
+    rtn += '-' * 46 + '\n'
+    rtn += '   1  | %dx  |   Aircraft Carrier   |    5    ' % ships_remaining['Aircraft Carrier'] + '\n'
+    rtn += '   2  | %dx  |   Battleship         |    4    ' % ships_remaining['Battleship'] + '\n'
+    rtn += '   3  | %dx  |   Cruiser            |    3    ' % ships_remaining['Cruiser'] + '\n'
+    rtn += '   4  | %dx  |   Destroyer          |    2    ' % ships_remaining['Destroyer'] + '\n'
+    rtn += '   5  | %dx  |   Submarine          |    1    ' % ships_remaining['Submarine']
+
+    return rtn
