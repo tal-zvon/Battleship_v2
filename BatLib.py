@@ -78,7 +78,9 @@ def offset_grids(str1, str2, offset, spacing):
         #If the offset is 0, keep grids on same line
         elif offset == 0:
             rtn_val += str1.split('\n')[i] + ' ' * spacing + str2.split('\n')[i] + '\n'
-    return rtn_val
+
+    #Return rtn_val without the last newline
+    return rtn_val.rstrip()
 
 
 def draw_grid(num_of_grids, grid_size, grid_title='Player', draw_rem_ships_table=True):
@@ -180,29 +182,50 @@ def draw_grid(num_of_grids, grid_size, grid_title='Player', draw_rem_ships_table
         #If this function was called with draw_rem_ships_table set to True, draw the remaining ships table
         if draw_rem_ships_table:
             #Declare 2 lists of remaining ships
-            Player_Ships = {'Aircraft Carrier': 1, 'Battleship': 1, 'Cruiser': 1, 'Destroyer': 2, 'Submarine': 2}
-            Computer_Ships = {'Aircraft Carrier': 1, 'Battleship': 1, 'Cruiser': 1, 'Destroyer': 2, 'Submarine': 2}
+            player_ships = {'Aircraft Carrier': 1, 'Battleship': 1, 'Cruiser': 1, 'Destroyer': 2, 'Submarine': 2}
+            computer_ships = {'Aircraft Carrier': 1, 'Battleship': 1, 'Cruiser': 1, 'Destroyer': 2, 'Submarine': 2}
 
-            rem_player_ships = print_ships(Player_Ships)
-            rem_computer_ships = print_ships(Computer_Ships)
+            rem_player_ships = print_ships(player_ships)
+            rem_computer_ships = print_ships(computer_ships)
 
-            combined_grids_with_rem_ships_table = ''
+            #Grid with first table and grid with second table
+            combined_grids_with_first_rem_ships_table = ''
+            combined_grids_with_second_rem_ships_table = ''
 
-            #Start position
+            #Start position of the remaining ships table
+            #for the player
             if grid_size <= 10:
-                start_pos = 2
+                plr_start_pos = 2
             elif 10 < grid_size < 15:
-                start_pos = 3
+                plr_start_pos = 3
             else:
-                start_pos = ((grid_size + 4) / 2) - (len(rem_player_ships.split('\n')) / 2)
+                plr_start_pos = ((grid_size + 4) / 2) - (len(rem_player_ships.split('\n')) / 2)
 
             for LINE in range(0, len(combined_grids.split('\n'))):
-                if start_pos <= LINE < start_pos + len(rem_player_ships.split('\n')):
-                    combined_grids_with_rem_ships_table += combined_grids.split('\n')[LINE] + ' ' * 5 + rem_player_ships.split('\n')[LINE - start_pos] + '\n'
+                if plr_start_pos <= LINE < plr_start_pos + len(rem_player_ships.split('\n')):
+                    combined_grids_with_first_rem_ships_table += combined_grids.split('\n')[LINE] + ' ' * 5 + \
+                        rem_player_ships.split('\n')[LINE - plr_start_pos] + '\n'
                 else:
-                    combined_grids_with_rem_ships_table += combined_grids.split('\n')[LINE] + '\n'
+                    combined_grids_with_first_rem_ships_table += combined_grids.split('\n')[LINE] + '\n'
 
-            return combined_grids_with_rem_ships_table
+            #Start position of the remaining ships table
+            #for the computer
+            if grid_size < 15:
+                pc_start_pos = len(combined_grids.split('\n')) - grid_size - 2
+            else:
+                pc_start_pos = len(combined_grids.split('\n')) - (grid_size / 2) - (
+                    len(rem_player_ships.split('\n')) / 2)
+
+            for LINE in range(0, len(combined_grids.split('\n'))):
+                if pc_start_pos <= LINE < pc_start_pos + len(rem_player_ships.split('\n')):
+                    combined_grids_with_second_rem_ships_table += rem_computer_ships.split('\n')[
+                        LINE - pc_start_pos] + ' ' * ((grid_size * 2 + 4) - len(rem_computer_ships.split('\n')[1])) + \
+                        combined_grids_with_first_rem_ships_table.split('\n')[LINE].lstrip() + '\n'
+                else:
+                    combined_grids_with_second_rem_ships_table += combined_grids_with_first_rem_ships_table.split('\n')[
+                        LINE] + '\n'
+
+            return combined_grids_with_second_rem_ships_table
         else:
             return combined_grids
 
@@ -228,8 +251,8 @@ def print_ships(ships_remaining):
     #Return value - the
     rtn = ''
     #rtn += "These are your ships:\n\n"
-    rtn += '  ID  |  #  |         Ship         |   Size' + '\n'
-    rtn += '-' * 46 + '\n'
+    rtn += '  ID  |  #  |         Ship         |   Size' + ' ' * 2 + '\n'
+    rtn += '-' * 45 + '\n'
     rtn += '   1  | %dx  |   Aircraft Carrier   |    5    ' % ships_remaining['Aircraft Carrier'] + '\n'
     rtn += '   2  | %dx  |   Battleship         |    4    ' % ships_remaining['Battleship'] + '\n'
     rtn += '   3  | %dx  |   Cruiser            |    3    ' % ships_remaining['Cruiser'] + '\n'

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 __author__ = 'tal'
-grid_size = 16  # Max 26 (size of the english alphabet)
+grid_size = 24  # Max 26 (size of the english alphabet)
 
 from BatLib import *
 import signal
@@ -12,6 +12,6 @@ signal.signal(signal.SIGINT, signal_handler)
 print draw_grid(2, grid_size)
 
 #while True:
-    #print_ships(Player_Ships)
-    #raw_input("\nWhich one would you like to place on the grid next? Enter it's ID> ")
+#print_ships(Player_Ships)
+#raw_input("\nWhich one would you like to place on the grid next? Enter it's ID> ")
 #    break
