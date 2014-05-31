@@ -1,6 +1,6 @@
 #!/usr/bin/python
 __author__ = 'tal'
-grid_size = 24  # Max 26 (size of the english alphabet)
+grid_size = 12  # Max 26 (size of the english alphabet)
 
 from BatLib import *
 import signal
@@ -9,7 +9,11 @@ import signal
 signal.signal(signal.SIGINT, signal_handler)
 
 #The 2 grids we'll be printing to the screen
-print draw_grid(2, grid_size)
+if grid_size < 12:
+    print draw_grid(2, grid_size, draw_rem_ships_table=False)
+else:
+    print draw_grid(2, grid_size)
+
 
 #while True:
 #print_ships(Player_Ships)

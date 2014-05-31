@@ -92,7 +92,7 @@ def draw_grid(num_of_grids, grid_size, grid_title='Player', draw_rem_ships_table
     :param str grid_title: The title to write above the grid. The default is None, so the argument
         can be omitted
     :param bool draw_rem_ships_table: True if you want the remaining ships table drawn. False if you don't.
-    :rtype : string
+    :rtype : str
     """
 
     #The variable we'll be returning -
@@ -185,21 +185,15 @@ def draw_grid(num_of_grids, grid_size, grid_title='Player', draw_rem_ships_table
             player_ships = {'Aircraft Carrier': 1, 'Battleship': 1, 'Cruiser': 1, 'Destroyer': 2, 'Submarine': 2}
             computer_ships = {'Aircraft Carrier': 1, 'Battleship': 1, 'Cruiser': 1, 'Destroyer': 2, 'Submarine': 2}
 
-            rem_player_ships = print_ships(player_ships)
-            rem_computer_ships = print_ships(computer_ships)
+            rem_player_ships = print_ships(player_ships, grid_size)
+            rem_computer_ships = print_ships(computer_ships, grid_size)
 
             #Grid with first table and grid with second table
             combined_grids_with_first_rem_ships_table = ''
             combined_grids_with_second_rem_ships_table = ''
 
             #Start position of the remaining ships table
-            #for the player
-            if grid_size <= 10:
-                plr_start_pos = 2
-            elif 10 < grid_size < 15:
-                plr_start_pos = 3
-            else:
-                plr_start_pos = ((grid_size + 4) / 2) - (len(rem_player_ships.split('\n')) / 2)
+            plr_start_pos = ((grid_size + 4) / 2) - (len(rem_player_ships.split('\n')) / 2)
 
             for LINE in range(0, len(combined_grids.split('\n'))):
                 if plr_start_pos <= LINE < plr_start_pos + len(rem_player_ships.split('\n')):
@@ -209,12 +203,9 @@ def draw_grid(num_of_grids, grid_size, grid_title='Player', draw_rem_ships_table
                     combined_grids_with_first_rem_ships_table += combined_grids.split('\n')[LINE] + '\n'
 
             #Start position of the remaining ships table
-            #for the computer
-            if grid_size < 15:
-                pc_start_pos = len(combined_grids.split('\n')) - grid_size - 2
-            else:
-                pc_start_pos = len(combined_grids.split('\n')) - (grid_size / 2) - (
-                    len(rem_player_ships.split('\n')) / 2)
+            pc_start_pos = len(combined_grids.split('\n')) - (grid_size / 2) - (
+                len(rem_player_ships.split('\n')) / 2)
+            pc_start_pos -= 1
 
             for LINE in range(0, len(combined_grids.split('\n'))):
                 if pc_start_pos <= LINE < pc_start_pos + len(rem_player_ships.split('\n')):
@@ -240,23 +231,78 @@ def signal_handler(signal, frame):
     exit(0)
 
 
-def print_ships(ships_remaining):
+def calc_spaces(ship, length_allowed):
+    """
+    Check if the actual ship name is shorter than the length allowed
+
+    :param str ship: The ship type (Aircraft Carrier, Sub, etc.)
+    :param int length_allowed: The max length the ship name can be
+    :rtype : int
+    """
+    if len(ship[0:length_allowed]) < length_allowed:
+        if length_allowed < 16:
+            return length_allowed - len(ship[0:length_allowed])
+        else:
+            return 16 - len(ship)
+    else:
+        return 0
+
+
+def print_ships(ships_remaining, grid_size, dynamic=True):
     """
     Prints the table of remaining ships
 
     :param dict ships_remaining: A dictionary of the ships remaining
+    :param int grid_size: A dictionary of the ships remaining
+    :param bool dynamic: True if you want the table to be generated dynamically. False if you want it full size
     :rtype : string
     """
+    if dynamic:
+        #Return value - the table
+        rtn = ''
 
-    #Return value - the
-    rtn = ''
-    #rtn += "These are your ships:\n\n"
-    rtn += '  ID  |  #  |         Ship         |   Size' + ' ' * 2 + '\n'
-    rtn += '-' * 45 + '\n'
-    rtn += '   1  | %dx  |   Aircraft Carrier   |    5    ' % ships_remaining['Aircraft Carrier'] + '\n'
-    rtn += '   2  | %dx  |   Battleship         |    4    ' % ships_remaining['Battleship'] + '\n'
-    rtn += '   3  | %dx  |   Cruiser            |    3    ' % ships_remaining['Cruiser'] + '\n'
-    rtn += '   4  | %dx  |   Destroyer          |    2    ' % ships_remaining['Destroyer'] + '\n'
-    rtn += '   5  | %dx  |   Submarine          |    1    ' % ships_remaining['Submarine']
+        #Length allowed for printing the ship name
+        ship_name_length = (grid_size * 2) - 17 - 3
+
+        #Spaces after 'Ship'
+        if ship_name_length >= 16:
+            spaces_after_ship = 12
+        else:
+            spaces_after_ship = ship_name_length - len('Ship')
+
+        rtn += 'ID |  # | Ship %s| Size ' % (' ' * spaces_after_ship) + '\n'
+
+        #If the allowed length of the ship is longer than 16
+        #characters (the name 'Aircraft Carrier' fits fully)
+        #the table stops growing, so there will always be 34
+        #dashes
+        #Otherwise, calculate the number of dashes needed
+        if ship_name_length >= 16:
+            rtn += '-' * 34 + '\n'
+        else:
+            rtn += '-' * (grid_size * 2 - 2) + '\n'
+
+        # noinspection PyPep8
+        rtn += ' 1 | %dx | %s | 5 ' % (ships_remaining['Aircraft Carrier'], 'Aircraft Carrier'[0:ship_name_length] + ' ' * calc_spaces('Aircraft Carrier', ship_name_length)) + ' ' * 3 + '\n'
+        # noinspection PyPep8
+        rtn += ' 2 | %dx | %s | 4 ' % (ships_remaining['Battleship'], 'Battleship'[0:ship_name_length] + ' ' * calc_spaces('Battleship', ship_name_length)) + ' ' * 3 + '\n'
+        # noinspection PyPep8
+        rtn += ' 3 | %dx | %s | 3 ' % (ships_remaining['Cruiser'], 'Cruiser'[0:ship_name_length] + ' ' * calc_spaces('Cruiser', ship_name_length)) + ' ' * 3 + '\n'
+        # noinspection PyPep8
+        rtn += ' 4 | %dx | %s | 2 ' % (ships_remaining['Destroyer'], 'Destroyer'[0:ship_name_length] + ' ' * calc_spaces('Destroyer', ship_name_length)) + ' ' * 3 + '\n'
+        # noinspection PyPep8
+        rtn += ' 5 | %dx | %s | 1 ' % (ships_remaining['Submarine'], 'Submarine'[0:ship_name_length] + ' ' * calc_spaces('Submarine', ship_name_length)) + ' ' * 3 + ''
+    else:
+        #Return value - the table
+        rtn = ''
+
+        #rtn += "These are your ships:\n\n"
+        rtn += '  ID  |  #  |         Ship         |   Size  ' + '\n'
+        rtn += '-' * 45 + '\n'
+        rtn += '   1  | %dx  |   Aircraft Carrier   |    5    ' % ships_remaining['Aircraft Carrier'] + '\n'
+        rtn += '   2  | %dx  |   Battleship         |    4    ' % ships_remaining['Battleship'] + '\n'
+        rtn += '   3  | %dx  |   Cruiser            |    3    ' % ships_remaining['Cruiser'] + '\n'
+        rtn += '   4  | %dx  |   Destroyer          |    2    ' % ships_remaining['Destroyer'] + '\n'
+        rtn += '   5  | %dx  |   Submarine          |    1    ' % ships_remaining['Submarine']
 
     return rtn
