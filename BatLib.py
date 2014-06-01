@@ -83,7 +83,7 @@ def offset_grids(str1, str2, offset, spacing):
     return rtn_val.rstrip()
 
 
-def draw_grid(num_of_grids, grid_size, grid_title='Player', draw_rem_ships_table=True):
+def draw_grid(num_of_grids, grid_size, player_ships, computer_ships, grid_title='Player', draw_rem_ships_table=True):
     """
     Draw either one or two grids on the screen
 
@@ -181,10 +181,6 @@ def draw_grid(num_of_grids, grid_size, grid_title='Player', draw_rem_ships_table
 
         #If this function was called with draw_rem_ships_table set to True, draw the remaining ships table
         if draw_rem_ships_table:
-            #Declare 2 lists of remaining ships
-            player_ships = {'Aircraft Carrier': 1, 'Battleship': 1, 'Cruiser': 1, 'Destroyer': 2, 'Submarine': 2}
-            computer_ships = {'Aircraft Carrier': 1, 'Battleship': 1, 'Cruiser': 1, 'Destroyer': 2, 'Submarine': 2}
-
             rem_player_ships = print_ships(player_ships, grid_size)
             rem_computer_ships = print_ships(computer_ships, grid_size)
 
